@@ -2,6 +2,9 @@ import mysql.connector
 from mysql.connector import errorcode
 import pathlib
 
+from mysql.connector.pooling import PooledMySQLConnection
+
+
 class DBConnect:
     """Class that is used to create and manage a pool of connections to the database.
     It implements a class method that works as a factory for lending the connections from the pool"""
@@ -12,7 +15,7 @@ class DBConnect:
         raise RuntimeError('Do not create an instance, use the class method get_connection()!')
 
     @classmethod
-    def get_connection(cls, pool_name = "my_pool", pool_size = 3) -> mysql.connector.pooling.PooledMySQLConnection:
+    def get_connection(cls, pool_name="my_pool", pool_size=3):
         """Factory method for lending connections from the pool. It also initializes the pool
         if it does not exist
         :param pool_name: name of the pool
@@ -21,9 +24,9 @@ class DBConnect:
         if cls._cnxpool is None:
             try:
                 cls._cnxpool = mysql.connector.pooling.MySQLConnectionPool(
-                    pool_name=pool_name,
-                    pool_size=pool_size,
-                    option_files=f"{pathlib.Path(__file__).resolve().parent}/connector.cnf"
+                        pool_name=pool_name,
+                        pool_size=pool_size,
+                        option_files=f"{pathlib.Path(__file__).resolve().parent}/connector.cnf"
                 )
                 return cls._cnxpool.get_connection()
             except mysql.connector.Error as err:

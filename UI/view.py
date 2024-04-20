@@ -13,6 +13,7 @@ class View(ft.UserControl):
         self._controller = None
         # graphical elements
         self._title = None
+        self.__theme_switch = None
         self.dd_mese: ft.Dropdown = None
         self.btn_umidita: ft.ElevatedButton = None
         self.btn_calcola_sequenza: ft.ElevatedButton = None
@@ -20,10 +21,14 @@ class View(ft.UserControl):
 
     def load_interface(self):
         # title
+        self.__theme_switch = ft.Switch(label="Dark Theme", on_change=self.theme_changed)
         self._title = ft.Text("Analisi meteo", color="blue", size=24)
-        self._page.controls.append(self._title)
+        self._page.controls.append(
+                ft.Row(spacing=400, controls=[self.__theme_switch, self._title, ],
+                       alignment=ft.MainAxisAlignment.START)
+        )
 
-        #ROW with some controls
+        # ROW with some controls
         self.dd_mese = ft.Dropdown(options=[ft.dropdown.Option(key="1", text="gennaio"),
                                             ft.dropdown.Option(key="2", text="febbraio"),
                                             ft.dropdown.Option(key="3", text="marzo"),
@@ -35,7 +40,7 @@ class View(ft.UserControl):
                                             ft.dropdown.Option(key="9", text="settembre"),
                                             ft.dropdown.Option(key="10", text="ottobre"),
                                             ft.dropdown.Option(key="11", text="novembre"),
-                                            ft.dropdown.Option(key="12", text="dicembre"),],
+                                            ft.dropdown.Option(key="12", text="dicembre"), ],
                                    label="mese",
                                    width=200,
                                    hint_text="Selezionare un mese",
@@ -46,8 +51,8 @@ class View(ft.UserControl):
                                              on_click=self._controller.handle_umidita_media)
 
         self.btn_calcola_sequenza = ft.ElevatedButton(text="Calcola sequenza",
-                                             tooltip="Calcola la sequenza ottimale per le analisi",
-                                             on_click=self._controller.handle_sequenza)
+                                                      tooltip="Calcola la sequenza ottimale per le analisi",
+                                                      on_click=self._controller.handle_sequenza)
         row1 = ft.Row([self.dd_mese, self.btn_umidita, self.btn_calcola_sequenza],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row1)
@@ -73,6 +78,22 @@ class View(ft.UserControl):
         self._page.dialog = dlg
         dlg.open = True
         self._page.update()
+
+    def theme_changed(self, e):
+        """Function that changes the color theme of the app, when the corresponding
+        switch is triggered"""
+        self._page.theme_mode = (
+            ft.ThemeMode.LIGHT
+            if self._page.theme_mode == ft.ThemeMode.DARK
+            else ft.ThemeMode.DARK
+        )
+        self.__theme_switch.label = (
+            "Light theme" if self._page.theme_mode == ft.ThemeMode.LIGHT else "Dark theme"
+        )
+        # self.__txt_container.bgcolor = (
+        #     ft.colors.GREY_900 if self.page.theme_mode == ft.ThemeMode.DARK else ft.colors.GREY_300
+        # )
+        self.update_page()
 
     def update_page(self):
         self._page.update()
