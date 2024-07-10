@@ -9,7 +9,7 @@ class Model:
         self._sequenza_ottima = []
 
     def get_umidita_media(self, _mese):
-        return MeteoDao.get_umidita_media(_mese)
+        return MeteoDao.get_umidita_media_mese(_mese)
 
     def get_situazioni_meta_mese(self, _mese):
         return MeteoDao.get_situazioni_meta_mese(_mese)
